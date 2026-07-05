@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="AI-powered student stress prediction application"
+    >
+
+    <title>Student Stress AI Predictor</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="ambient-blobs" aria-hidden="true">
+    <span class="ambient-blob blob-1"></span>
+    <span class="ambient-blob blob-2"></span>
+    <span class="ambient-blob blob-3"></span>
+    <span class="ambient-blob blob-4"></span>
+</div>
+
+<div class="page-container">
+
+    <!-- Header -->
+    <header class="header load-in">
+
+        <a href="/" class="brand">
+
+            {% set logo_url = url_for("static", filename="images/logo-full.png") %}
+
+            <span class="brand-icon">
+
+                <span class="logo-orbit-ring" aria-hidden="true">
+                    <span class="logo-orbit-dot"></span>
+                </span>
+
+                <span class="logo-figure">
+                    <img
+                        src="{{ logo_url }}"
+                        alt="Stress Insight AI — predict stress, prevent early, live better"
+                    >
+                    <span
+                        class="logo-shimmer"
+                        aria-hidden="true"
+                        style="-webkit-mask-image: url('{{ logo_url }}'); mask-image: url('{{ logo_url }}');"
+                    ></span>
+                </span>
+
+            </span>
+
+        </a>
+
+    </header>
+
+
+    <!-- Hero -->
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="hero-label load-in" style="animation-delay: 90ms;">
+                Daily rhythm analysis
+            </span>
+
+            <h1 class="load-in" style="animation-delay: 160ms;">
+                Map your day. See where the stress lives.
+            </h1>
+
+            <p class="load-in" style="animation-delay: 230ms;">
+                Log your sleep, study, screen time and activity. We'll turn
+                your routine into a stress prediction and show exactly which
+                parts of your day are driving it.
+            </p>
+
+        </div>
+
+        <div class="hero-ring-wrap load-in" style="animation-delay: 260ms;">
+
+            <div class="hero-ring-stage" aria-hidden="true">
+
+                <svg
+                    class="hero-ring-svg"
+                    id="heroRing"
+                    viewBox="0 0 160 160"
+                >
+                    <circle
+                        class="ring-track"
+                        cx="80"
+                        cy="80"
+                        r="66"
+                        stroke-width="14"
+                    ></circle>
+
+                    <g class="hero-ring-marker-orbit">
+                        <circle
+                            class="hero-ring-marker"
+                            cx="80"
+                            cy="14"
+                            r="4"
+                        ></circle>
+                    </g>
+                </svg>
+
+                <div class="hero-ring-tags">
+
+                    <span class="hero-ring-tag" style="--tag-angle: 48deg;">
+                        <span class="hero-ring-tag-pin">
+                            <i class="legend-dot sleep"></i>Sleep
+                        </span>
+                    </span>
+
+                    <span class="hero-ring-tag" style="--tag-angle: 132deg;">
+                        <span class="hero-ring-tag-pin">
+                            <i class="legend-dot study"></i>Study
+                        </span>
+                    </span>
+
+                    <span class="hero-ring-tag" style="--tag-angle: 184deg;">
+                        <span class="hero-ring-tag-pin">
+                            <i class="legend-dot activity"></i>Activity
+                        </span>
+                    </span>
+
+                    <span class="hero-ring-tag" style="--tag-angle: 238deg;">
+                        <span class="hero-ring-tag-pin">
+                            <i class="legend-dot screen"></i>Screen
+                        </span>
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="hero-ring-legend-mobile" aria-hidden="true">
+                <span><i class="legend-dot sleep"></i>Sleep</span>
+                <span><i class="legend-dot study"></i>Study</span>
+                <span><i class="legend-dot activity"></i>Activity</span>
+                <span><i class="legend-dot screen"></i>Screen</span>
+            </div>
+
+            <p class="hero-ring-caption">
+                <strong>12 lifestyle factors</strong>, mapped across
+                a 24-hour ring, feed every prediction.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+
+        <!-- Prediction Form -->
+        <section class="form-card load-in" style="animation-delay: 320ms;">
+
+            <div class="card-header">
+
+                <div>
+                    <span class="step-number">Step one</span>
+                    <h2>Enter your details</h2>
+                    <p>
+                        Complete all fields to generate your stress prediction.
+                    </p>
+                </div>
+
+                <div class="card-header-actions">
+
+                    <button
+                        type="button"
+                        class="example-button"
+                        id="fillExampleButton"
+                    >
+                        Fill example
+                    </button>
+
+                    <button
+                        type="button"
+                        class="example-button ghost"
+                        id="resetFormButton"
+                    >
+                        Reset
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <form id="predictionForm" novalidate>
+
+                <!-- Personal Information -->
+                <div class="form-section">
+
+                    <div class="section-heading">
+                        <h3>Personal information</h3>
+                        <span>Basic profile details</span>
+                    </div>
+
+                    <div class="form-grid three-columns">
+
+                        <div class="form-group">
+
+                            <label for="Age">
+                                Age
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                id="Age"
+                                name="Age"
+                                min="18"
+                                max="60"
+                                placeholder="Example: 21"
+                                required
+                            >
+
+                            <small>
+                                Recommended model range: 18–24 years
+                            </small>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Gender">
+                                Gender
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="Gender"
+                                name="Gender"
+                                required
+                            >
+                                <option value="">Select gender</option>
+                                <option value="Female">Female</option>
+                                <option value="Male">Male</option>
+                                <option value="Other">Other</option>
+                                <option value="Prefer not to say">
+                                    Prefer not to say
+                                </option>
+                            </select>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Country">
+                                Country
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="Country"
+                                name="Country"
+                                maxlength="80"
+                                placeholder="Example: India"
+                                required
+                            >
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Academic_Level">
+                                Academic level
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="Academic_Level"
+                                name="Academic_Level"
+                                required
+                            >
+                                <option value="">
+                                    Select academic level
+                                </option>
+
+                                <option value="High School">
+                                    High School
+                                </option>
+
+                                <option value="Undergraduate">
+                                    Undergraduate
+                                </option>
+
+                                <option value="Graduate">
+                                    Graduate
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+                            </select>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Most_Used_Platform">
+                                Most-used platform
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="Most_Used_Platform"
+                                name="Most_Used_Platform"
+                                required
+                            >
+                                <option value="">
+                                    Select platform
+                                </option>
+
+                                <option value="Facebook">Facebook</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="KakaoTalk">KakaoTalk</option>
+                                <option value="LINE">LINE</option>
+                                <option value="LinkedIn">LinkedIn</option>
+                                <option value="Snapchat">Snapchat</option>
+                                <option value="TikTok">TikTok</option>
+                                <option value="Twitter">Twitter</option>
+                                <option value="VKontakte">VKontakte</option>
+                                <option value="WeChat">WeChat</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                                <option value="YouTube">YouTube</option>
+                                <option value="Other">Other</option>
+                            </select>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Purpose_Of_Use">
+                                Primary purpose
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="Purpose_Of_Use"
+                                name="Purpose_Of_Use"
+                                required
+                            >
+                                <option value="">
+                                    Select purpose
+                                </option>
+
+                                <option value="Education">
+                                    Education
+                                </option>
+
+                                <option value="Entertainment">
+                                    Entertainment
+                                </option>
+
+                                <option value="Networking">
+                                    Networking
+                                </option>
+
+                                <option value="News">
+                                    News
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+                            </select>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Digital Usage -->
+                <div class="form-section">
+
+                    <div class="section-heading">
+                        <h3>Digital usage</h3>
+                        <span>Daily social-media and phone habits</span>
+                    </div>
+
+                    <div class="form-grid two-columns">
+
+                        <div class="form-group">
+
+                            <label for="Avg_Daily_Usage_Hours">
+                                Average daily social-media usage
+                                <span>*</span>
+                            </label>
+
+                            <div class="input-unit">
+
+                                <input
+                                    type="number"
+                                    id="Avg_Daily_Usage_Hours"
+                                    name="Avg_Daily_Usage_Hours"
+                                    min="0"
+                                    max="24"
+                                    step="0.1"
+                                    placeholder="Example: 5.5"
+                                    required
+                                >
+
+                                <span>hours</span>
+
+                            </div>
+
+                            <small>
+                                Enter average daily social-media usage
+                            </small>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Daily_Unlocks">
+                                Phone unlocks per day
+                                <span>*</span>
+                            </label>
+
+                            <div class="input-unit">
+
+                                <input
+                                    type="number"
+                                    id="Daily_Unlocks"
+                                    name="Daily_Unlocks"
+                                    min="0"
+                                    max="1000"
+                                    step="1"
+                                    placeholder="Example: 150"
+                                    required
+                                >
+
+                                <span>times</span>
+
+                            </div>
+
+                            <small>
+                                Approximate number of daily phone unlocks
+                            </small>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Daily Routine -->
+                <div class="form-section">
+
+                    <div class="section-heading">
+                        <h3>Daily routine</h3>
+                        <span>Study, activity, sleep and wellbeing</span>
+                    </div>
+
+                    <div class="form-grid two-columns">
+
+                        <div class="form-group">
+
+                            <label for="Study_Hours">
+                                Study hours per day
+                                <span>*</span>
+                            </label>
+
+                            <div class="input-unit">
+
+                                <input
+                                    type="number"
+                                    id="Study_Hours"
+                                    name="Study_Hours"
+                                    min="0"
+                                    max="24"
+                                    step="0.1"
+                                    placeholder="Example: 4"
+                                    required
+                                >
+
+                                <span>hours</span>
+
+                            </div>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Physical_Activity_Hours">
+                                Physical activity per day
+                                <span>*</span>
+                            </label>
+
+                            <div class="input-unit">
+
+                                <input
+                                    type="number"
+                                    id="Physical_Activity_Hours"
+                                    name="Physical_Activity_Hours"
+                                    min="0"
+                                    max="24"
+                                    step="0.1"
+                                    placeholder="Example: 1.5"
+                                    required
+                                >
+
+                                <span>hours</span>
+
+                            </div>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Sleep_Hours_Per_Night">
+                                Sleep per night
+                                <span>*</span>
+                            </label>
+
+                            <div class="input-unit">
+
+                                <input
+                                    type="number"
+                                    id="Sleep_Hours_Per_Night"
+                                    name="Sleep_Hours_Per_Night"
+                                    min="0"
+                                    max="24"
+                                    step="0.1"
+                                    placeholder="Example: 7"
+                                    required
+                                >
+
+                                <span>hours</span>
+
+                            </div>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="Mental_Health_Score">
+                                Mental health self-rating
+                                <span>*</span>
+                            </label>
+
+                            <div class="input-unit">
+
+                                <input
+                                    type="number"
+                                    id="Mental_Health_Score"
+                                    name="Mental_Health_Score"
+                                    min="1"
+                                    max="10"
+                                    step="0.1"
+                                    placeholder="Example: 7"
+                                    required
+                                >
+
+                                <span>/ 10</span>
+
+                            </div>
+
+                            <small>
+                                1 means struggling and 10 means excellent
+                            </small>
+
+                            <span class="field-error" aria-live="polite"></span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="day-preview">
+
+                        <svg
+                            class="mini-ring-svg"
+                            id="miniRing"
+                            viewBox="0 0 100 100"
+                        >
+                            <circle
+                                class="ring-track"
+                                cx="50"
+                                cy="50"
+                                r="41"
+                                stroke-width="9"
+                            ></circle>
+
+                            <text
+                                x="50"
+                                y="47"
+                                text-anchor="middle"
+                                class="mini-ring-center"
+                                id="miniRingHours"
+                            >0h</text>
+
+                            <text
+                                x="50"
+                                y="58"
+                                text-anchor="middle"
+                                class="mini-ring-center-label"
+                            >LOGGED</text>
+
+                        </svg>
+
+                        <div class="day-preview-copy">
+
+                            <h4>Your day, so far</h4>
+
+                            <div class="day-preview-legend">
+                                <span><i class="legend-dot sleep"></i>Sleep</span>
+                                <span><i class="legend-dot study"></i>Study</span>
+                                <span><i class="legend-dot activity"></i>Activity</span>
+                                <span><i class="legend-dot screen"></i>Screen time</span>
+                                <span><i class="legend-dot free"></i>Unaccounted</span>
+                            </div>
+
+                            <span
+                                class="overflow-note"
+                                id="dayPreviewOverflowNote"
+                                hidden
+                            >
+                                That's more than 24 hours — the ring is
+                                scaled proportionally to fit the day.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="formError"
+                    class="form-error"
+                    hidden
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="predict-button"
+                    id="predictButton"
+                >
+                    <span id="predictButtonText">
+                        Generate stress prediction
+                    </span>
+
+                    <svg viewBox="0 0 20 20">
+                        <path d="M7 4l6 6-6 6"/>
+                    </svg>
+                </button>
+
+
+                <p class="privacy-message">
+
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M7 10V8a5 5 0 0 1 10 0v2M6 10h12v10H6z"
+                        />
+                    </svg>
+
+                    Your entries are processed only to generate this
+                    prediction and are not stored.
+
+                </p>
+
+            </form>
+
+        </section>
+
+
+        <!-- Prediction Result -->
+        <aside
+            class="result-card load-in"
+            style="animation-delay: 400ms;"
+            aria-live="polite"
+            aria-atomic="false"
+        >
+
+            <!-- Empty Result -->
+            <div
+                class="empty-result"
+                id="emptyResult"
+            >
+
+                <svg
+                    class="ghost-ring-svg"
+                    viewBox="0 0 160 160"
+                >
+                    <circle
+                        cx="80"
+                        cy="80"
+                        r="66"
+                        stroke-width="10"
+                    ></circle>
+                </svg>
+
+                <span class="step-number">Step two</span>
+
+                <h2>Your rhythm ring will appear here</h2>
+
+                <p>
+                    Complete the form to view your predicted stress level,
+                    confidence score, contributing factors and recommendations.
+                </p>
+
+                <div class="result-preview-list">
+                    <span>Stress prediction</span>
+                    <span>Confidence percentage</span>
+                    <span>Observed factors</span>
+                    <span>Recommended actions</span>
+                </div>
+
+            </div>
+
+
+            <!-- Loading Result -->
+            <div
+                class="loading-result"
+                id="loadingResult"
+                role="status"
+                hidden
+            >
+
+                <svg
+                    class="loading-ring-svg"
+                    viewBox="0 0 100 100"
+                >
+                    <defs>
+                        <linearGradient id="loadingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#34366F"/>
+                            <stop offset="35%" stop-color="#E2A23B"/>
+                            <stop offset="70%" stop-color="#2C9C93"/>
+                            <stop offset="100%" stop-color="#B25470"/>
+                        </linearGradient>
+                    </defs>
+
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="41"
+                        stroke-width="9"
+                        stroke="url(#loadingGradient)"
+                        stroke-dasharray="180 78"
+                        stroke-linecap="round"
+                    ></circle>
+                </svg>
+
+                <h2>Analysing your routine</h2>
+
+                <p id="loadingMessage">
+                    Reading your daily rhythm...
+                </p>
+
+            </div>
+
+
+            <!-- Completed Result -->
+            <div
+                class="completed-result"
+                id="completedResult"
+                hidden
+            >
+
+                <div class="result-header">
+
+                    <span class="step-number">Step two</span>
+
+                    <span id="resultDate"></span>
+
+                </div>
+
+
+                <span class="prediction-label">
+                    Predicted stress level
+                </span>
+
+
+                <div class="result-ring-row">
+
+                    <svg
+                        class="result-ring-svg"
+                        id="resultRing"
+                        viewBox="0 0 128 128"
+                    >
+                        <circle
+                            class="ring-track"
+                            cx="64"
+                            cy="64"
+                            r="54"
+                            stroke-width="12"
+                        ></circle>
+
+                        <text
+                            x="64"
+                            y="61"
+                            text-anchor="middle"
+                            class="result-ring-center"
+                            id="resultRingHours"
+                        >0h</text>
+
+                        <text
+                            x="64"
+                            y="75"
+                            text-anchor="middle"
+                            class="result-ring-center-label"
+                        >LOGGED</text>
+                    </svg>
+
+                    <div class="result-heading-copy">
+
+                        <h2 id="predictionValue">—</h2>
+
+                        <span
+                            class="confidence-badge"
+                            id="confidenceValue"
+                        >
+                            —
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="ring-legend" id="resultRingLegend"></div>
+
+                <span
+                    class="overflow-note"
+                    id="resultRingOverflowNote"
+                    hidden
+                >
+                    Logged hours exceeded 24 — the ring above is scaled
+                    proportionally to fit the day.
+                </span>
+
+                <p
+                    class="prediction-summary"
+                    id="predictionSummary"
+                ></p>
+
+
+                <div class="result-section">
+
+                    <div class="result-section-heading">
+
+                        <h3>Probability breakdown</h3>
+
+                        <span>Model confidence</span>
+
+                    </div>
+
+                    <div
+                        class="probability-list"
+                        id="probabilityList"
+                    ></div>
+
+                </div>
+
+
+                <div class="result-section">
+
+                    <div class="result-section-heading">
+
+                        <h3>Observed factors</h3>
+
+                        <span>Based on your entries</span>
+
+                    </div>
+
+                    <div
+                        class="factor-list"
+                        id="factorList"
+                    ></div>
+
+                </div>
+
+
+                <div class="recommendation-section">
+
+                    <h3>Recommended next steps</h3>
+
+                    <ul id="recommendationList"></ul>
+
+                </div>
+
+
+                <div
+                    class="warning-box"
+                    id="warningBox"
+                    hidden
+                ></div>
+
+
+                <!-- Prediction history: new feature -->
+                <div class="result-section history-section">
+
+                    <div class="result-section-heading">
+
+                        <h3>Your recent check-ins</h3>
+
+                        <span
+                            class="history-clear"
+                            id="historyClear"
+                            role="button"
+                            tabindex="0"
+                        >
+                            Clear
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="history-strip"
+                        id="historyStrip"
+                    ></div>
+
+                </div>
+
+
+                <p
+                    class="disclaimer"
+                    id="disclaimer"
+                ></p>
+
+
+                <button
+                    type="button"
+                    class="new-assessment-button"
+                    id="newAssessmentButton"
+                >
+                    Start a new assessment
+                </button>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <footer class="footer load-in" style="animation-delay: 480ms;">
+
+        <span>
+            Student Stress AI Predictor
+        </span>
+
+        <span>
+            Educational prediction — not a medical diagnosis
+        </span>
+
+    </footer>
+
+</div>
+
+
+<script>
+    const form = document.getElementById("predictionForm");
+
+    const predictButton =
+        document.getElementById("predictButton");
+
+    const predictButtonText =
+        document.getElementById("predictButtonText");
+
+    const formError =
+        document.getElementById("formError");
+
+    const emptyResult =
+        document.getElementById("emptyResult");
+
+    const loadingResult =
+        document.getElementById("loadingResult");
+
+    const completedResult =
+        document.getElementById("completedResult");
+
+
+    const numericFields = new Set([
+        "Age",
+        "Avg_Daily_Usage_Hours",
+        "Daily_Unlocks",
+        "Study_Hours",
+        "Physical_Activity_Hours",
+        "Sleep_Hours_Per_Night",
+        "Mental_Health_Score"
+    ]);
+
+
+    /* ---------- Motion helpers ---------- */
+
+    const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    function animateNumber(el, endValue, { decimals = 1, duration = 700, suffix = "" } = {}) {
+
+        if (prefersReducedMotion) {
+            el.textContent = `${endValue.toFixed(decimals)}${suffix}`;
+            return;
+        }
+
+        const startTime = performance.now();
+
+        function tick(now) {
+
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = endValue * eased;
+
+            el.textContent = `${current.toFixed(decimals)}${suffix}`;
+
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+            } else {
+                el.textContent = `${endValue.toFixed(decimals)}${suffix}`;
+            }
+
+        }
+
+        requestAnimationFrame(tick);
+
+    }
+
+    function replayAnimation(el, className) {
+
+        el.classList.remove(className);
+        void el.offsetWidth;
+        el.classList.add(className);
+
+    }
+
+
+    /* ---------- Loading message rotator ---------- */
+
+    const LOADING_MESSAGES = [
+        "Reading your daily rhythm...",
+        "Weighing screen time against rest...",
+        "Cross-checking sleep and study balance...",
+        "Calibrating the confidence score..."
+    ];
+
+    let loadingMessageTimer = null;
+
+    function startLoadingMessages() {
+
+        const el = document.getElementById("loadingMessage");
+        let index = 0;
+
+        el.textContent = LOADING_MESSAGES[0];
+
+        stopLoadingMessages();
+
+        loadingMessageTimer = window.setInterval(() => {
+
+            index = (index + 1) % LOADING_MESSAGES.length;
+
+            if (prefersReducedMotion) {
+                el.textContent = LOADING_MESSAGES[index];
+                return;
+            }
+
+            el.style.opacity = "0";
+
+            window.setTimeout(() => {
+                el.textContent = LOADING_MESSAGES[index];
+                el.style.opacity = "1";
+            }, 250);
+
+        }, 1100);
+
+    }
+
+    function stopLoadingMessages() {
+
+        if (loadingMessageTimer) {
+            window.clearInterval(loadingMessageTimer);
+            loadingMessageTimer = null;
+        }
+
+    }
+
+
+    /* ---------- Rhythm ring rendering ---------- */
+
+    const RING_TRACK_COLOR = "#E2E6ED";
+
+    function buildDaySegments({ sleep = 0, study = 0, activity = 0, screen = 0 }) {
+
+        const total = 24;
+        const used = sleep + study + activity + screen;
+        const overflow = used > total;
+        const scale = overflow ? total / used : 1;
+        const free = Math.max(total - used, 0);
+
+        return {
+            overflow,
+            segments: [
+                { key: "sleep", hours: sleep * scale, raw: sleep, color: "#34366F" },
+                { key: "study", hours: study * scale, raw: study, color: "#E2A23B" },
+                { key: "activity", hours: activity * scale, raw: activity, color: "#2C9C93" },
+                { key: "screen", hours: screen * scale, raw: screen, color: "#B25470" },
+                { key: "free", hours: free, raw: free, color: RING_TRACK_COLOR }
+            ]
+        };
+
+    }
+
+    function renderRing(svg, segments, { gap = 2, duration = 800, stagger = 90 } = {}) {
+
+        const track = svg.querySelector(".ring-track");
+
+        const cx = Number(track.getAttribute("cx"));
+        const cy = Number(track.getAttribute("cy"));
+        const r = Number(track.getAttribute("r"));
+        const strokeWidth = Number(track.getAttribute("stroke-width"));
+
+        const circumference = 2 * Math.PI * r;
+
+        svg.querySelectorAll(".ring-segment").forEach((el) => el.remove());
+
+        let offset = 0;
+        const pending = [];
+
+        segments.forEach((segment, index) => {
+
+            if (segment.hours <= 0) {
+                return;
+            }
+
+            const length = (segment.hours / 24) * circumference;
+            const visibleLength = Math.max(length - gap, 0.001);
+
+            const circle = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "circle"
+            );
+
+            circle.setAttribute("class", "ring-segment");
+            circle.setAttribute("data-key", segment.key);
+            circle.setAttribute("cx", cx);
+            circle.setAttribute("cy", cy);
+            circle.setAttribute("r", r);
+            circle.setAttribute("fill", "none");
+            circle.style.stroke = segment.color;
+            circle.style.strokeWidth = strokeWidth;
+            circle.style.strokeLinecap = "round";
+            circle.style.transform = `rotate(-90deg)`;
+            circle.style.transformOrigin = `${cx}px ${cy}px`;
+            circle.setAttribute("stroke-dashoffset", -offset);
+
+            const finalDasharray =
+                `${visibleLength} ${circumference - visibleLength}`;
+
+            if (prefersReducedMotion) {
+
+                circle.setAttribute("stroke-dasharray", finalDasharray);
+
+            } else {
+
+                circle.setAttribute(
+                    "stroke-dasharray",
+                    `0 ${circumference}`
+                );
+
+                circle.style.transitionDuration = `${duration}ms`;
+                circle.style.transitionDelay = `${index * stagger}ms`;
+
+                pending.push({ circle, finalDasharray });
+
+            }
+
+            svg.appendChild(circle);
+
+            offset += length;
+
+        });
+
+        if (pending.length) {
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+
+                    pending.forEach(({ circle, finalDasharray }) => {
+                        circle.setAttribute("stroke-dasharray", finalDasharray);
+                    });
+
+                });
+            });
+
+        }
+
+        const marker = svg.querySelector(".hero-ring-marker-orbit");
+
+        if (marker) {
+            svg.appendChild(marker);
+        }
+
+    }
+
+    function readHours(name) {
+        const field = form.elements[name];
+        const value = field ? Number(field.value) : 0;
+        return Number.isFinite(value) && value > 0 ? value : 0;
+    }
+
+    function updateMiniRing() {
+
+        const { overflow, segments } = buildDaySegments({
+            sleep: readHours("Sleep_Hours_Per_Night"),
+            study: readHours("Study_Hours"),
+            activity: readHours("Physical_Activity_Hours"),
+            screen: readHours("Avg_Daily_Usage_Hours")
+        });
+
+        const miniRing = document.getElementById("miniRing");
+
+        renderRing(miniRing, segments, { duration: 350, stagger: 0 });
+
+        if (!prefersReducedMotion) {
+            replayAnimation(miniRing, "is-pulsing");
+        }
+
+        const logged = segments
+            .filter((segment) => segment.key !== "free")
+            .reduce((sum, segment) => sum + segment.raw, 0);
+
+        document.getElementById("miniRingHours").textContent =
+            `${logged.toFixed(1)}h`;
+
+        document.getElementById("dayPreviewOverflowNote").hidden = !overflow;
+
+    }
+
+    function renderResultRing(payload) {
+
+        const { overflow, segments } = buildDaySegments({
+            sleep: Number(payload.Sleep_Hours_Per_Night) || 0,
+            study: Number(payload.Study_Hours) || 0,
+            activity: Number(payload.Physical_Activity_Hours) || 0,
+            screen: Number(payload.Avg_Daily_Usage_Hours) || 0
+        });
+
+        renderRing(document.getElementById("resultRing"), segments, {
+            duration: 900,
+            stagger: 110
+        });
+
+        const logged = segments
+            .filter((segment) => segment.key !== "free")
+            .reduce((sum, segment) => sum + segment.raw, 0);
+
+        animateNumber(
+            document.getElementById("resultRingHours"),
+            logged,
+            { duration: 900, suffix: "h" }
+        );
+
+        document.getElementById("resultRingOverflowNote").hidden = !overflow;
+
+        const labels = {
+            sleep: "Sleep",
+            study: "Study",
+            activity: "Activity",
+            screen: "Screen time",
+            free: "Unaccounted"
+        };
+
+        const legend = document.getElementById("resultRingLegend");
+
+        legend.innerHTML = segments
+            .map((segment, index) => `
+                <span class="stagger-item" style="animation-delay: ${index * 60}ms;">
+                    <i
+                        class="legend-dot"
+                        style="background:${segment.color}"
+                    ></i>
+                    ${labels[segment.key]} · ${segment.raw.toFixed(1)}h
+                </span>
+            `)
+            .join("");
+
+    }
+
+    function initHeroRing() {
+
+        const { segments } = buildDaySegments({
+            sleep: 7.5,
+            study: 3.5,
+            activity: 1,
+            screen: 6
+        });
+
+        renderRing(
+            document.getElementById("heroRing"),
+            segments,
+            { duration: 1100, stagger: 130 }
+        );
+
+    }
+
+
+    [
+        "Sleep_Hours_Per_Night",
+        "Study_Hours",
+        "Physical_Activity_Hours",
+        "Avg_Daily_Usage_Hours"
+    ].forEach((fieldName) => {
+
+        const field = form.elements[fieldName];
+
+        if (field) {
+            field.addEventListener("input", updateMiniRing);
+        }
+
+    });
+
+
+    /* ---------- Result view state ---------- */
+
+    function showResultView(view) {
+
+        emptyResult.hidden = view !== "empty";
+        loadingResult.hidden = view !== "loading";
+        completedResult.hidden = view !== "completed";
+
+        const activeEl =
+            view === "empty" ? emptyResult :
+            view === "loading" ? loadingResult :
+            completedResult;
+
+        if (!prefersReducedMotion) {
+            replayAnimation(activeEl, "view-enter");
+        }
+
+    }
+
+
+    function showError(message) {
+
+        formError.textContent = message;
+        formError.hidden = false;
+
+    }
+
+
+    function clearError() {
+
+        formError.textContent = "";
+        formError.hidden = true;
+
+    }
+
+
+    function getFormPayload() {
+
+        const formData = new FormData(form);
+
+        const payload = {};
+
+        formData.forEach((value, key) => {
+
+            payload[key] = numericFields.has(key)
+                ? Number(value)
+                : value.trim();
+
+        });
+
+        return payload;
+
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+
+    }
+
+
+    /* ---------- Field-level validation ---------- */
+
+    function fieldLabel(field) {
+
+        const label = form.querySelector(`label[for="${field.id}"]`);
+
+        return label
+            ? label.textContent.replace("*", "").trim()
+            : field.name.replaceAll("_", " ");
+
+    }
+
+    function friendlyValidationMessage(field) {
+
+        if (field.validity.valueMissing) {
+            return `${fieldLabel(field)} is required.`;
+        }
+
+        if (field.validity.rangeUnderflow) {
+            return `${fieldLabel(field)} must be at least ${field.min}.`;
+        }
+
+        if (field.validity.rangeOverflow) {
+            return `${fieldLabel(field)} must be ${field.max} or less.`;
+        }
+
+        if (field.validity.badInput || field.validity.typeMismatch) {
+            return `Enter a valid value for ${fieldLabel(field)}.`;
+        }
+
+        return field.validationMessage || "This value isn't valid.";
+
+    }
+
+    function showFieldError(field) {
+
+        const group = field.closest(".form-group");
+
+        if (!group) {
+            return;
+        }
+
+        group.classList.add("has-error");
+
+        const message = group.querySelector(".field-error");
+
+        if (message) {
+            message.textContent = friendlyValidationMessage(field);
+        }
+
+    }
+
+    function clearFieldError(field) {
+
+        const group = field.closest(".form-group");
+
+        if (!group) {
+            return;
+        }
+
+        group.classList.remove("has-error");
+
+        const message = group.querySelector(".field-error");
+
+        if (message) {
+            message.textContent = "";
+        }
+
+    }
+
+    function clearAllFieldErrors() {
+
+        form.querySelectorAll(".form-group").forEach((group) => {
+
+            group.classList.remove("has-error");
+
+            const message = group.querySelector(".field-error");
+
+            if (message) {
+                message.textContent = "";
+            }
+
+        });
+
+    }
+
+    Array.from(form.elements).forEach((field) => {
+
+        if (field.tagName !== "INPUT" && field.tagName !== "SELECT") {
+            return;
+        }
+
+        field.addEventListener("invalid", (event) => {
+            event.preventDefault();
+            showFieldError(field);
+        });
+
+        field.addEventListener("input", () => clearFieldError(field));
+
+        field.addEventListener("blur", () => {
+
+            if (field.value && !field.checkValidity()) {
+                showFieldError(field);
+            }
+
+        });
+
+    });
+
+
+    function renderProbabilities(probabilities = {}) {
+
+        const probabilityList =
+            document.getElementById("probabilityList");
+
+        const predictionOrder = [
+            { label: "Low", level: "low", tag: "calm" },
+            { label: "Medium", level: "medium", tag: "watch" },
+            { label: "High", level: "high", tag: "elevated" },
+            { label: "Very High", level: "very-high", tag: "urgent" }
+        ];
+
+        probabilityList.innerHTML = predictionOrder
+            .map(({ label, level, tag }, index) => {
+
+                const probability =
+                    Number(probabilities[label] || 0);
+
+                return `
+                    <div
+                        class="probability-item stagger-item"
+                        data-level="${level}"
+                        style="animation-delay: ${index * 70}ms;"
+                    >
+
+                        <span class="probability-name" data-tag="${tag}">
+                            ${escapeHtml(label)}
+                        </span>
+
+                        <div class="probability-track">
+
+                            <span
+                                class="probability-fill"
+                                data-target="${probability}"
+                                style="width: 0%"
+                            ></span>
+
+                        </div>
+
+                        <strong>
+                            ${probability.toFixed(1)}%
+                        </strong>
+
+                    </div>
+                `;
+
+            })
+            .join("");
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+
+                probabilityList
+                    .querySelectorAll(".probability-fill")
+                    .forEach((fill) => {
+                        fill.style.width = `${fill.dataset.target}%`;
+                    });
+
+            });
+        });
+
+    }
+
+
+    function renderFactors(factors = []) {
+
+        const factorList =
+            document.getElementById("factorList");
+
+        if (!factors.length) {
+
+            factorList.innerHTML = `
+                <p class="no-data-message">
+                    No observed factors were returned.
+                </p>
+            `;
+
+            return;
+
+        }
+
+        factorList.innerHTML = factors
+            .map((factor, index) => {
+
+                const impactClass =
+                    String(factor.impact || "")
+                        .toLowerCase()
+                        .replaceAll(" ", "-");
+
+                return `
+                    <div
+                        class="factor-item stagger-item"
+                        style="animation-delay: ${index * 55}ms;"
+                    >
+
+                        <span class="factor-label">
+                            ${escapeHtml(factor.label)}
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(factor.value)}
+                        </strong>
+
+                        <span class="impact-badge ${impactClass}">
+                            ${escapeHtml(factor.impact)} impact
+                        </span>
+
+                    </div>
+                `;
+
+            })
+            .join("");
+
+    }
+
+
+    function renderRecommendations(recommendations = []) {
+
+        const recommendationList =
+            document.getElementById("recommendationList");
+
+        recommendationList.innerHTML = recommendations
+            .map((recommendation, index) => `
+                <li class="stagger-item" style="animation-delay: ${index * 70}ms;">
+                    ${escapeHtml(recommendation)}
+                </li>
+            `)
+            .join("");
+
+    }
+
+
+    function renderWarnings(warnings = [], severe = false) {
+
+        const warningBox =
+            document.getElementById("warningBox");
+
+        if (!warnings.length) {
+
+            warningBox.innerHTML = "";
+            warningBox.hidden = true;
+            warningBox.classList.remove("critical");
+
+            return;
+
+        }
+
+        warningBox.classList.toggle("critical", severe);
+
+        warningBox.innerHTML = warnings
+            .map((warning) => `
+                <p>
+                    <strong>Important:</strong>
+                    ${escapeHtml(warning)}
+                </p>
+            `)
+            .join("");
+
+        warningBox.hidden = false;
+
+        if (!prefersReducedMotion) {
+            replayAnimation(warningBox, "view-enter");
+        }
+
+    }
+
+
+    /* ---------- Prediction history (new feature) ---------- */
+
+    const HISTORY_STORAGE_KEY = "stressPredictorHistory";
+    const HISTORY_LIMIT = 8;
+
+    const HISTORY_LEVEL_BY_PREDICTION = {
+        "Low": "low",
+        "Medium": "medium",
+        "High": "high",
+        "Very High": "very-high"
+    };
+
+    function loadHistory() {
+
+        try {
+
+            const raw = window.localStorage.getItem(HISTORY_STORAGE_KEY);
+            const parsed = raw ? JSON.parse(raw) : [];
+
+            return Array.isArray(parsed) ? parsed : [];
+
+        } catch (error) {
+
+            return [];
+
+        }
+
+    }
+
+    function saveHistory(entries) {
+
+        try {
+            window.localStorage.setItem(
+                HISTORY_STORAGE_KEY,
+                JSON.stringify(entries)
+            );
+        } catch (error) {
+            /* Storage unavailable — history simply won't persist. */
+        }
+
+    }
+
+    function addHistoryEntry(data) {
+
+        const entries = loadHistory();
+
+        entries.push({
+            timestamp: Date.now(),
+            prediction: data.prediction || "Unknown",
+            confidence: Number(data.confidence || 0)
+        });
+
+        const trimmed = entries.slice(-HISTORY_LIMIT);
+
+        saveHistory(trimmed);
+        renderHistory(trimmed.length - 1);
+
+    }
+
+    function renderHistory(currentIndex = -1) {
+
+        const strip = document.getElementById("historyStrip");
+        const entries = loadHistory();
+
+        if (!entries.length) {
+
+            strip.innerHTML = `
+                <span class="history-empty">
+                    No check-ins yet — this is your first one.
+                </span>
+            `;
+
+            return;
+
+        }
+
+        strip.innerHTML = entries
+            .map((entry, index) => {
+
+                const level =
+                    HISTORY_LEVEL_BY_PREDICTION[entry.prediction] || "medium";
+
+                const date = new Intl.DateTimeFormat(
+                    undefined,
+                    { month: "short", day: "numeric" }
+                ).format(new Date(entry.timestamp));
+
+                const isCurrent = index === currentIndex;
+
+                return `
+                    <div class="history-item${isCurrent ? " is-current" : ""}" title="${escapeHtml(entry.prediction)} · ${escapeHtml(String(entry.confidence.toFixed(0)))}% confidence">
+                        <span class="history-dot" data-level="${level}"></span>
+                        <span>${escapeHtml(date)}</span>
+                    </div>
+                `;
+
+            })
+            .join("");
+
+    }
+
+    document.getElementById("historyClear").addEventListener(
+        "click",
+        () => {
+            saveHistory([]);
+            renderHistory();
+        }
+    );
+
+    document.getElementById("historyClear").addEventListener(
+        "keydown",
+        (event) => {
+
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                saveHistory([]);
+                renderHistory();
+            }
+
+        }
+    );
+
+
+    function renderPrediction(data, payload) {
+
+        const completedResult =
+            document.getElementById("completedResult");
+
+        completedResult.className =
+            `completed-result ${data.tone || "caution"}`;
+
+        const predictionValueEl = document.getElementById("predictionValue");
+        predictionValueEl.textContent = data.prediction || "Unavailable";
+
+        const confidenceValueEl = document.getElementById("confidenceValue");
+        const confidence = Number(data.confidence || 0);
+
+        if (prefersReducedMotion) {
+            confidenceValueEl.textContent = `${confidence.toFixed(1)}% confidence`;
+        } else {
+            replayAnimation(predictionValueEl, "pop-in");
+            replayAnimation(confidenceValueEl, "pop-in");
+            animateNumber(confidenceValueEl, confidence, {
+                duration: 700,
+                suffix: "% confidence"
+            });
+        }
+
+        document.getElementById(
+            "predictionSummary"
+        ).textContent = data.summary || "";
+
+        document.getElementById(
+            "resultDate"
+        ).textContent =
+            new Intl.DateTimeFormat(
+                undefined,
+                {
+                    dateStyle: "medium",
+                    timeStyle: "short"
+                }
+            ).format(new Date());
+
+        document.getElementById(
+            "disclaimer"
+        ).textContent = data.disclaimer || "";
+
+        renderResultRing(payload);
+        renderProbabilities(data.probabilities);
+        renderFactors(data.observed_factors);
+        renderRecommendations(data.recommendations);
+
+        const severeTone = data.tone === "critical" || data.tone === "warning";
+        renderWarnings(data.warnings, severeTone);
+
+        addHistoryEntry(data);
+
+        showResultView("completed");
+
+    }
+
+
+    form.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            clearError();
+            clearAllFieldErrors();
+
+            if (!form.checkValidity()) {
+
+                Array.from(form.elements).forEach((field) => {
+
+                    if (
+                        (field.tagName === "INPUT" || field.tagName === "SELECT") &&
+                        !field.checkValidity()
+                    ) {
+                        showFieldError(field);
+                    }
+
+                });
+
+                const firstInvalid = form.querySelector(":invalid");
+
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                    firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+
+                showError("Please fix the highlighted fields before continuing.");
+
+                return;
+
+            }
+
+            showResultView("loading");
+            startLoadingMessages();
+
+            predictButton.disabled = true;
+            predictButtonText.textContent = "Analysing...";
+
+            const payload = getFormPayload();
+
+            try {
+
+                const response = await fetch(
+                    "/api/predict",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+
+                    let errorMessage =
+                        data.error || "Prediction could not be generated.";
+
+                    if (data.fields) {
+
+                        errorMessage = Object
+                            .entries(data.fields)
+                            .map(([field, message]) => {
+
+                                const readableField =
+                                    field.replaceAll("_", " ");
+
+                                return `${readableField}: ${message}`;
+
+                            })
+                            .join(" ");
+
+                    }
+
+                    throw new Error(errorMessage);
+
+                }
+
+                renderPrediction(data, payload);
+
+            } catch (error) {
+
+                showResultView("empty");
+
+                showError(
+                    error.message ||
+                    "Unable to connect to the prediction API."
+                );
+
+            } finally {
+
+                stopLoadingMessages();
+
+                predictButton.disabled = false;
+
+                predictButtonText.textContent =
+                    "Generate stress prediction";
+
+            }
+
+        }
+    );
+
+
+    document.getElementById(
+        "fillExampleButton"
+    ).addEventListener(
+        "click",
+        function () {
+
+            const exampleData = {
+                Age: 21,
+                Gender: "Male",
+                Country: "India",
+                Academic_Level: "Undergraduate",
+                Most_Used_Platform: "Instagram",
+                Purpose_Of_Use: "Entertainment",
+                Avg_Daily_Usage_Hours: 7.5,
+                Daily_Unlocks: 220,
+                Study_Hours: 2.5,
+                Physical_Activity_Hours: 0.8,
+                Sleep_Hours_Per_Night: 5.5,
+                Mental_Health_Score: 4.5
+            };
+
+            Object.entries(
+                exampleData
+            ).forEach(([fieldName, value], index) => {
+
+                const field = form.elements[fieldName];
+
+                if (!field) {
+                    return;
+                }
+
+                field.value = value;
+                clearFieldError(field);
+
+                if (prefersReducedMotion) {
+                    return;
+                }
+
+                window.setTimeout(() => {
+                    replayAnimation(field, "field-flash");
+                }, index * 25);
+
+            });
+
+            updateMiniRing();
+            clearError();
+
+        }
+    );
+
+
+    document.getElementById(
+        "resetFormButton"
+    ).addEventListener(
+        "click",
+        function () {
+
+            form.reset();
+            clearError();
+            clearAllFieldErrors();
+            updateMiniRing();
+
+        }
+    );
+
+
+    document.getElementById(
+        "newAssessmentButton"
+    ).addEventListener(
+        "click",
+        function () {
+
+            showResultView("empty");
+
+            form.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+    );
+
+
+    /* ---------- Header glass state on scroll ---------- */
+
+    const header = document.querySelector(".header");
+    let headerIsScrolled = false;
+
+    function updateHeaderScrollState() {
+
+        const scrolled = window.scrollY > 12;
+
+        if (scrolled !== headerIsScrolled) {
+            header.classList.toggle("is-scrolled", scrolled);
+            headerIsScrolled = scrolled;
+        }
+
+    }
+
+    window.addEventListener("scroll", updateHeaderScrollState, { passive: true });
+    updateHeaderScrollState();
+
+
+    initHeroRing();
+    updateMiniRing();
+    renderHistory();
+</script>
+
+</body>
+</html>
